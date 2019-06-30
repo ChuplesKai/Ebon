@@ -20,6 +20,7 @@
 std::map< std::string, SDL_Color > EB_COL =
 {
     {"white", {255,255,255} },
+    {"gray", {108,108,108} },
     {"black", {0,0,0} },
     {"blue", {0,0,230} },
     {"red", {230,0,0} },
@@ -31,9 +32,9 @@ std::map< std::string, SDL_Color > EB_COL =
     {"magenta", {230,0,230} },
     {"pink", {255,180,190} },
     {"salmon", {155,40,50} },
-    {"brick", {80,20,0} },
-    {"navy", {0,20,80} },
-    {"forest", {10,80,10} },
+    {"brick", {110,20,0} },
+    {"navy", {0,20,110} },
+    {"forest", {10,110,10} },
     {"brown", {110,80,0} }
 };
 
@@ -57,6 +58,8 @@ class ebon_graphics_t
     //Generic Texture Render
     void render( SDL_Texture* t, int x=0, int y=0 );
     void render_sub( SDL_Texture* t, std::vector<double> subrect, int x=0, int y=0);
+    //Basic Rectangle Render
+    void render_rect( std::vector<double> r, SDL_Color& color );
 
     //Generate a Texture from an image
     SDL_Texture* rnd_img( std::string image, SDL_Color color = {255,255,255} );

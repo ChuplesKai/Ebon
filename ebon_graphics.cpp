@@ -137,6 +137,20 @@ void ebon_graphics_t::render_sub( SDL_Texture* t, std::vector<double> subrect, i
 /**
  *
  */
+void ebon_graphics_t::render_rect( std::vector<double> r, SDL_Color& color )
+{
+    SDL_Rect srct;
+    srct.x = r[0];
+    srct.y = r[1];
+    srct.w = r[2];
+    srct.h = r[3];
+    SDL_SetRenderDrawColor(_ren, color.r, color.g, color.b, color.a);
+    SDL_RenderFillRect(_ren, &srct);
+}
+
+/**
+ *
+ */
 SDL_Texture* ebon_graphics_t::rnd_img( std::string image, SDL_Color color )
 {
     SDL_Texture *tex = IMG_LoadTexture(_ren, image.c_str());
@@ -220,7 +234,7 @@ bool ebon_graphics_t::register_font( std::string fontname, unsigned sz )
 {
     std::string reg_font = fontstring( fontname, sz );
     //Attempt to open the font
-    std::string ff("C:\\Workspace\\Ebon\\font\\");
+    std::string ff("C:\\Windows\\Fonts\\");
     ff = ff + fontname + std::string(".ttf");
     TTF_Font *font = TTF_OpenFont(ff.c_str(), sz);
     if( font == NULL )

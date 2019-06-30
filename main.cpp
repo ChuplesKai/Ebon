@@ -3,8 +3,7 @@
 #include <cstring>
 #include <iostream>
 
-#include "ebon_audio.h"
-#include "ebon_graphics.h"
+#include "ebon.h"
 
 #undef main
 
@@ -15,21 +14,18 @@ int main(int argc, char* argv[])
 {
     // Always need to Initialize SDL
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    // Initialize EBON modules
-    ebon_audio_t AUDIO;
-    ebon_graphics_t GRAPHICS;
     // Initialize the window
     GRAPHICS.initialize("Test Window", 1080, 720);
 
     //DEBUG: Set up some text
-    GRAPHICS.register_font("Amperzand",36);
-    GRAPHICS.register_font("Amperzand",26);
+    GRAPHICS.register_font("calibrib",36);
+    GRAPHICS.register_font("consolab",26);
 
     //Render static text
-    if( !GRAPHICS.use_font("Amperzand",36) )
+    if( !GRAPHICS.use_font("calibrib",36) )
         return -1;
-    auto txt = GRAPHICS.rnd_text( "Scrolling Text of Awesome", EB_COL["salmon"] );
-    if( !GRAPHICS.use_font("Amperzand",26) )
+    auto txt = GRAPHICS.rnd_text( "Scrolling Text of Awesome", EB_COL["pink"] );
+    if( !GRAPHICS.use_font("consolab",26) )
         return -1;
 
     char timetext[50];
@@ -41,12 +37,13 @@ int main(int argc, char* argv[])
     AUDIO.play_se("audio/Cancel_X.wav", 10);
     while(global_event.type != SDL_QUIT)
     {
+        GRAPHICS.render_rect( {0,0,1080,720}, EB_COL["forest"] );
         GRAPHICS.render_sub( bg, {800,400,780,520}, 150, 100 );
 
         GRAPHICS.render(txt, dx, 30);
 
         sprintf(timetext, "%d:%d", SDL_GetTicks()/60000, (SDL_GetTicks()/1000)%60);
-        GRAPHICS.render( GRAPHICS.rnd_text(timetext, EB_COL["emerald"]), 30, 720-50 );
+        GRAPHICS.render( GRAPHICS.rnd_text(timetext, EB_COL["gray"]), 30, 720-50 );
 
         GRAPHICS.frame();
         AUDIO.frame();
