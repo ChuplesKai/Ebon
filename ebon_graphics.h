@@ -1,8 +1,25 @@
 /**
- * Copyright 2019, Andrew Dobson
- *
+ * @author Andrew Dobson (www.doctorandrewdobson.com)
  * @file ebon_graphics.h
- * @author Andrew Dobson
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any
+ * damages arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any
+ * purpose, including commercial applications, and to alter it and
+ * redistribute it freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must
+ * not claim that you wrote the original software. If you use this
+ * software in a product, an acknowledgment in the product documentation
+ * would be appreciated but is not required.
+ *
+ * 2. Altered source versions must be plainly marked as such, and
+ * must not be misrepresented as being the original software.
+ *
+ * 3. This notice may not be removed or altered from any source
+ * distribution.
  */
 
 #include <stdio.h>
@@ -16,8 +33,11 @@
 #include "SDL_image.h"
 #include "SDL_ttf.h"
 
+namespace EBON
+{
+
 // Standard Colors Map
-std::map< std::string, SDL_Color > EB_COL =
+std::map< std::string, SDL_Color > COLOR =
 {
     {"white", {255,255,255} },
     {"gray", {108,108,108} },
@@ -38,6 +58,8 @@ std::map< std::string, SDL_Color > EB_COL =
     {"brown", {110,80,0} }
 };
 
+enum JUSTIFY {LEFT, CENTER, RIGHT};
+
 //The main graphics class, which internally uses SDL to handle
 // window management and drawing to windows.
 //For the instance of this class, refer to Graphics.
@@ -56,10 +78,10 @@ class ebon_graphics_t
     void frame();
 
     //Generic Texture Render
-    void render( SDL_Texture* t, int x=0, int y=0 );
-    void render_sub( SDL_Texture* t, std::vector<double> subrect, int x=0, int y=0);
+    void render( SDL_Texture* t, int x=0, int y=0, JUSTIFY js = JUSTIFY::LEFT );
+    void render_sub( SDL_Texture* t, std::vector<unsigned> subrect, int x=0, int y=0, JUSTIFY js = LEFT );
     //Basic Rectangle Render
-    void render_rect( std::vector<double> r, SDL_Color& color );
+    void render_rect( std::vector<unsigned> r, SDL_Color& color );
 
     //Generate a Texture from an image
     SDL_Texture* rnd_img( std::string image, SDL_Color color = {255,255,255} );
@@ -86,3 +108,5 @@ class ebon_graphics_t
     SDL_Surface* CreateSurface(Uint32 flags, int width, int height, const SDL_Surface* display);
     std::string fontstring( std::string fontname, unsigned sz );
 };
+
+} // end namespace

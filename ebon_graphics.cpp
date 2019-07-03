@@ -1,8 +1,25 @@
 /**
- * Copyright 2014, Andrew Dobson
- *
+ * @author Andrew Dobson (www.doctorandrewdobson.com)
  * @file ebon_graphics.cpp
- * @author Andrew Dobson
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any
+ * damages arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any
+ * purpose, including commercial applications, and to alter it and
+ * redistribute it freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must
+ * not claim that you wrote the original software. If you use this
+ * software in a product, an acknowledgment in the product documentation
+ * would be appreciated but is not required.
+ *
+ * 2. Altered source versions must be plainly marked as such, and
+ * must not be misrepresented as being the original software.
+ *
+ * 3. This notice may not be removed or altered from any source
+ * distribution.
  */
 
 #include <cstdlib>
@@ -12,6 +29,7 @@
 #include "ebon_graphics.h"
 
 using namespace std;
+using namespace EBON;
 
 /**
  *
@@ -101,13 +119,26 @@ SDL_Surface* ebon_graphics_t::CreateSurface(Uint32 flags, int width, int height,
 /**
  *
  */
-void ebon_graphics_t::render( SDL_Texture* t, int x, int y )
+void ebon_graphics_t::render( SDL_Texture* t, int x, int y, JUSTIFY js )
 {
     SDL_Rect rct;
     int iW, iH;
-    rct.x = x;
-    rct.y = y;
+    // Get some data about what we're trying to render
     SDL_QueryTexture(t, NULL, NULL, &iW, &iH);
+    //Change coordinates for non-left justification
+    if(js == JUSTIFY::RIGHT)
+    {
+        rct.x = x - iW;
+    }
+    else if(js == JUSTIFY::CENTER)
+    {
+        rct.x = x - iW/2;
+    }
+    else
+    {
+        rct.x = x;
+    }
+    rct.y = y;
     rct.w = iW;
     rct.h = iH;
     SDL_RenderCopy( _ren, t, NULL, &rct );
@@ -116,12 +147,24 @@ void ebon_graphics_t::render( SDL_Texture* t, int x, int y )
 /**
  *
  */
-void ebon_graphics_t::render_sub( SDL_Texture* t, std::vector<double> subrect, int x, int y )
+void ebon_graphics_t::render_sub( SDL_Texture* t, std::vector<unsigned> subrect, int x, int y, JUSTIFY js )
 {
     SDL_Rect srct, drct;
     int iW, iH;
+    if( js == JUSTIFY::RIGHT )
+    {
+        drct.x = x - subrect[2];
+    }
+    else if(js == JUSTIFY::CENTER)
+    {
+        drct.x = x - subrect[2]/2;
+    }
+    else
+    {
+        drct.x = x;
+    }
+
     //Destination: size must correspond to source
-    drct.x = x;
     drct.y = y;
     drct.w = subrect[2];
     drct.h = subrect[3];
@@ -137,7 +180,7 @@ void ebon_graphics_t::render_sub( SDL_Texture* t, std::vector<double> subrect, i
 /**
  *
  */
-void ebon_graphics_t::render_rect( std::vector<double> r, SDL_Color& color )
+void ebon_graphics_t::render_rect( std::vector<unsigned> r, SDL_Color& color )
 {
     SDL_Rect srct;
     srct.x = r[0];
@@ -146,6 +189,7 @@ void ebon_graphics_t::render_rect( std::vector<double> r, SDL_Color& color )
     srct.h = r[3];
     SDL_SetRenderDrawColor(_ren, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(_ren, &srct);
+    SDL_SetRenderDrawColor(_ren, 0, 0, 0, 255);
 }
 
 /**
@@ -164,16 +208,15 @@ SDL_Texture* ebon_graphics_t::rnd_img( std::string image, SDL_Color color )
  */
 SDL_Texture* ebon_graphics_t::rnd_text( std::string text, SDL_Color& color )
 {
-    int offset = 1;
-
 	//We need to first render to a surface as that's what TTF_RenderText
 	//returns, then load that surface into a texture
 	int txtW, txtH;
 	SDL_Surface *coloredt = TTF_RenderText_Blended(_font, text.c_str(), color);
-	SDL_Surface *blackt = TTF_RenderText_Blended(_font, text.c_str(), EB_COL["black"]);
+	SDL_Surface *blackt = TTF_RenderText_Blended(_font, text.c_str(), COLOR["black"]);
 	SDL_SetSurfaceAlphaMod( blackt, 150 );
 	txtW = blackt->w;
 	txtH = blackt->h;
+	int offset = txtH/20;
 	SDL_Surface *fsurf = CreateSurface( 0, txtW+offset, txtH+offset, coloredt);
 
     SDL_Rect srct, drct;
